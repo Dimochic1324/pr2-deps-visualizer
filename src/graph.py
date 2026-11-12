@@ -68,3 +68,18 @@ def build_graph(config, test_repository):
     dfs(config["package"], 0, [])
 
     return graph, cycles
+
+
+def reverse_repository(repository):
+    reversed_repository = {}
+
+    for package in repository:
+        reversed_repository[package] = []
+
+    for package, dependencies in repository.items():
+        for name in dependencies:
+            if name not in reversed_repository:
+                reversed_repository[name] = []
+            reversed_repository[name].append(package)
+
+    return reversed_repository

@@ -65,3 +65,6 @@ def check_config(config):
 
     if not isinstance(config["filter"], str):
         raise ValueError("filter должен быть строкой")
+
+    if not isinstance(config.get("reverse_mode", False), bool):
+        raise ValueError("reverse_mode должен быть true или false")

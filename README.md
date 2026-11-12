@@ -15,6 +15,7 @@
 - ограничение глубины анализа и фильтрацию пакетов;
 - обнаружение циклических зависимостей;
 - тестовый репозиторий в текстовом файле;
+- вывод обратных зависимостей;
 - тестирование с помощью pytest.
 
 ## Параметры
@@ -27,7 +28,8 @@
 - `output_image` — имя файла с изображением графа;
 - `ascii_tree` — режим вывода зависимостей в виде ASCII-дерева;
 - `max_depth` — максимальная глубина анализа зависимостей;
-- `filter` — подстрока для фильтрации пакетов.
+- `filter` — подстрока для фильтрации пакетов;
+- `reverse_mode` — (необязательный) вывод обратных зависимостей.
 
 ## Получение зависимостей
 
@@ -56,6 +58,13 @@ C: D E
 
 Примеры лежат в папке `repos/`.
 
+## Обратные зависимости
+
+Если `reverse_mode` равен `true`, программа выводит пакеты, которые зависят
+от заданного. Для этого все стрелки графа разворачиваются (функция
+`reverse_repository`), и запускается тот же обход DFS. Режим работает только
+с тестовым репозиторием.
+
 ## Запуск
 
 ```text
@@ -69,6 +78,7 @@ deps-graph/
 ├── configs/
 │   ├── error_*.json
 │   ├── test_*.json
+│   ├── reverse_*.json
 │   ├── flask.json
 │   ├── unknown_package.json
 │   └── wrong_url.json
@@ -79,7 +89,9 @@ deps-graph/
 │   ├── test_deps.bat
 │   ├── test_deps.sh
 │   ├── test_graph.bat
-│   └── test_graph.sh
+│   ├── test_graph.sh
+│   ├── test_reverse.bat
+│   └── test_reverse.sh
 │
 ├── src/
 │   ├── config.py
@@ -93,7 +105,8 @@ deps-graph/
 ├── tests/
 │   ├── test_config.py
 │   ├── test_graph.py
-│   └── test_repository.py
+│   ├── test_repository.py
+│   └── test_reverse.py
 │
 ├── .gitignore
 ├── config.json

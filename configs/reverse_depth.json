@@ -1,0 +1,10 @@
+{
+    "package": "F",
+    "repository": "repos/deep.txt",
+    "test_mode": true,
+    "output_image": "graph.png",
+    "ascii_tree": true,
+    "max_depth": 2,
+    "filter": "",
+    "reverse_mode": true
+}

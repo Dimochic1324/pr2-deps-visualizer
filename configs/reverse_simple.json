@@ -1,0 +1,10 @@
+{
+    "package": "D",
+    "repository": "repos/simple.txt",
+    "test_mode": true,
+    "output_image": "graph.png",
+    "ascii_tree": true,
+    "max_depth": 10,
+    "filter": "",
+    "reverse_mode": true
+}
