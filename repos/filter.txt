@@ -1,0 +1,6 @@
+# Пакеты TEST и TESTS должны пропускаться фильтром
+A: B TEST
+B: C TESTS
+C:
+TEST: C
+TESTS:

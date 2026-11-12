@@ -1,0 +1,9 @@
+{
+    "package": "A",
+    "repository": "repos/deep.txt",
+    "test_mode": true,
+    "output_image": "graph.png",
+    "ascii_tree": true,
+    "max_depth": 3,
+    "filter": ""
+}
