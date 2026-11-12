@@ -16,6 +16,8 @@
 - обнаружение циклических зависимостей;
 - тестовый репозиторий в текстовом файле;
 - вывод обратных зависимостей;
+- сохранение графа на языке D2 и в формате PNG;
+- вывод зависимостей в виде ASCII-дерева;
 - тестирование с помощью pytest.
 
 ## Параметры
@@ -65,6 +67,41 @@ C: D E
 `reverse_repository`), и запускается тот же обход DFS. Режим работает только
 с тестовым репозиторием.
 
+## Визуализация
+
+Граф сохраняется в файл на языке диаграмм D2, каждая зависимость — одна строка:
+
+```text
+"requests" -> "urllib3"
+```
+
+Из этого файла программа [d2](https://d2lang.com) делает картинку PNG.
+Если параметр `ascii_tree` равен `true`, на экран выводится дерево:
+
+```text
+matplotlib
+|-- contourpy
+    |-- numpy
+|-- cycler
+|-- python-dateutil
+    |-- six
+```
+
+## Сравнение с pip
+
+Для сравнения используются штатные инструменты `pip show` и `pipdeptree`
+(скрипт `scripts/compare_pip.bat`). Результаты могут отличаться:
+
+- pip проверяет условия вида `python_version < "3.10"` и
+  `platform_system == "Windows"`, а программа их не проверяет и показывает
+  такие зависимости всегда (например, `importlib-metadata` у `flask`);
+- программа берёт последнюю версию пакета с PyPI, а pip показывает
+  установленную версию;
+- программа ограничивает глубину (`max_depth`) и пропускает пакеты по фильтру;
+- программа пишет имена в нижнем регистре через дефис
+  (`charset-normalizer`), а pip — как в описании пакета
+  (`charset_normalizer`).
+
 ## Запуск
 
 ```text
@@ -80,10 +117,13 @@ deps-graph/
 │   ├── test_*.json
 │   ├── reverse_*.json
 │   ├── flask.json
+│   ├── matplotlib.json
 │   ├── unknown_package.json
 │   └── wrong_url.json
 │
 ├── scripts/
+│   ├── compare_pip.bat
+│   ├── compare_pip.sh
 │   ├── test_config.bat
 │   ├── test_config.sh
 │   ├── test_deps.bat
@@ -91,13 +131,16 @@ deps-graph/
 │   ├── test_graph.bat
 │   ├── test_graph.sh
 │   ├── test_reverse.bat
-│   └── test_reverse.sh
+│   ├── test_reverse.sh
+│   ├── test_visual.bat
+│   └── test_visual.sh
 │
 ├── src/
 │   ├── config.py
 │   ├── graph.py
 │   ├── main.py
-│   └── repository.py
+│   ├── repository.py
+│   └── visualize.py
 │
 ├── repos/
 │   └── *.txt
@@ -106,7 +149,8 @@ deps-graph/
 │   ├── test_config.py
 │   ├── test_graph.py
 │   ├── test_repository.py
-│   └── test_reverse.py
+│   ├── test_reverse.py
+│   └── test_visualize.py
 │
 ├── .gitignore
 ├── config.json

@@ -1,0 +1,9 @@
+{
+    "package": "matplotlib",
+    "repository": "https://pypi.org/pypi",
+    "test_mode": false,
+    "output_image": "matplotlib.png",
+    "ascii_tree": true,
+    "max_depth": 2,
+    "filter": ""
+}

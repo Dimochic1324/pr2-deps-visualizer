@@ -2,7 +2,7 @@
     "package": "requests",
     "repository": "https://pypi.org/pypi",
     "test_mode": false,
-    "output_image": "graph.png",
+    "output_image": "requests.png",
     "ascii_tree": true,
     "max_depth": 3,
     "filter": ""

@@ -1,5 +1,6 @@
 from config import parse_arguments, read_config, check_config
 from graph import read_test_repository, build_graph, reverse_repository
+from visualize import save_image, print_tree
 
 
 def print_graph(title, graph, cycles, empty_text="нет зависимостей"):
@@ -65,6 +66,11 @@ def main():
         print(", ".join(sorted(users)) or "никто")
     else:
         print_graph("Граф зависимостей:", graph, cycles)
+        save_image(graph, config["output_image"])
+
+        if config["ascii_tree"]:
+            print("Дерево зависимостей:")
+            print_tree(graph, config["package"], 0, [])
 
 
 if __name__ == "__main__":
