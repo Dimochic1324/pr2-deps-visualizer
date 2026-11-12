@@ -1,0 +1,9 @@
+{
+    "package": "requests",
+    "repository": "https://no-such-site-12345.ru/pypi",
+    "test_mode": false,
+    "output_image": "graph.png",
+    "ascii_tree": true,
+    "max_depth": 3,
+    "filter": ""
+}

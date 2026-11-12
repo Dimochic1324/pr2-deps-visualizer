@@ -1,4 +1,5 @@
 from config import parse_arguments, read_config, check_config
+from repository import get_dependencies
 
 
 def main():
@@ -8,13 +9,22 @@ def main():
         config = read_config(args.config)
         check_config(config)
 
+        dependencies = get_dependencies(
+            config["repository"],
+            config["package"]
+        )
+
     except ValueError as error:
         print(f"Ошибка: {error}")
         return
 
-    print("Параметры запуска:")
-    for key, value in config.items():
-        print(f"{key} = {value}")
+    print(f"Прямые зависимости пакета {config['package']}:")
+
+    if not dependencies:
+        print("нет зависимостей")
+
+    for dependency in dependencies:
+        print(dependency)
 
 
 if __name__ == "__main__":

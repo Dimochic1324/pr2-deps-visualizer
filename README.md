@@ -9,8 +9,8 @@
 На данный момент программа поддерживает:
 
 - конфигурационный файл JSON;
-- вывод параметров запуска;
 - обработку ошибок в параметрах;
+- получение прямых зависимостей пакета из репозитория PyPI;
 - тестирование с помощью pytest.
 
 ## Параметры
@@ -25,6 +25,13 @@
 - `max_depth` — максимальная глубина анализа зависимостей;
 - `filter` — подстрока для фильтрации пакетов.
 
+## Получение зависимостей
+
+Зависимости берутся из репозитория PyPI без pip и сторонних библиотек.
+Программа скачивает страницу `https://pypi.org/pypi/<пакет>/json`
+и берёт из неё список `requires_dist`. Необязательные зависимости
+(`extra == ...`) пропускаются.
+
 ## Запуск
 
 ```text
@@ -36,18 +43,25 @@ python src/main.py --config config.json
 ```text
 deps-graph/
 ├── configs/
-│   └── error_*.json
+│   ├── error_*.json
+│   ├── flask.json
+│   ├── unknown_package.json
+│   └── wrong_url.json
 │
 ├── scripts/
 │   ├── test_config.bat
-│   └── test_config.sh
+│   ├── test_config.sh
+│   ├── test_deps.bat
+│   └── test_deps.sh
 │
 ├── src/
 │   ├── config.py
-│   └── main.py
+│   ├── main.py
+│   └── repository.py
 │
 ├── tests/
-│   └── test_config.py
+│   ├── test_config.py
+│   └── test_repository.py
 │
 ├── .gitignore
 ├── config.json
