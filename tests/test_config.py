@@ -6,12 +6,14 @@ sys.path.append("src")
 
 from config import read_config, check_config
 
+EXPECTED_DEPTH = 3
+
 
 def test_read_config():
     config = read_config("config.json")
 
     assert config["package"] == "requests"
-    assert config["max_depth"] == 3
+    assert config["max_depth"] == EXPECTED_DEPTH
 
 
 def test_config_not_found():

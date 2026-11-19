@@ -16,61 +16,77 @@ def print_graph(title, graph, cycles, empty_text="нет зависимосте�
         print("Найден цикл:", " -> ".join(cycle))
 
 
+def load_config(config_path):
+    config = read_config(config_path)
+    check_config(config)
+
+    if config.get("reverse_mode", False) and not config["test_mode"]:
+        raise ValueError(
+            "обратные зависимости работают только в тестовом режиме"
+        )
+
+    return config
+
+
+def load_test_repository(config):
+    if not config["test_mode"]:
+        return {}
+
+    repository = read_test_repository(config["repository"])
+
+    if config["package"] not in repository:
+        raise ValueError(
+            f"пакет не найден в репозитории: {config['package']}"
+        )
+
+    if config.get("reverse_mode", False):
+        repository = reverse_repository(repository)
+
+    return repository
+
+
+def print_reverse(config, graph, cycles):
+    print_graph(
+        "Обратные зависимости (пакет -> кто от него зависит):",
+        graph,
+        cycles,
+        "никто не зависит"
+    )
+
+    users = set()
+    for dependencies in graph.values():
+        users.update(dependencies)
+    users.discard(config["package"])
+
+    print(f"От пакета {config['package']} зависят:", end=" ")
+    print(", ".join(sorted(users)) or "никто")
+
+
+def print_result(config, graph, cycles):
+    print_graph("Граф зависимостей:", graph, cycles)
+    save_image(graph, config["output_image"])
+
+    if config["ascii_tree"]:
+        print("Дерево зависимостей:")
+        print_tree(graph, config["package"], 0, [])
+
+
 def main():
     args = parse_arguments()
 
     try:
-        config = read_config(args.config)
-        check_config(config)
-
-        reverse_mode = config.get("reverse_mode", False)
-
-        if reverse_mode and not config["test_mode"]:
-            raise ValueError(
-                "обратные зависимости работают только в тестовом режиме"
-            )
-
-        test_repository = {}
-
-        if config["test_mode"]:
-            test_repository = read_test_repository(config["repository"])
-
-            if config["package"] not in test_repository:
-                raise ValueError(
-                    f"пакет не найден в репозитории: {config['package']}"
-                )
-
-        if reverse_mode:
-            test_repository = reverse_repository(test_repository)
-
+        config = load_config(args.config)
+        test_repository = load_test_repository(config)
         graph, cycles = build_graph(config, test_repository)
 
     except ValueError as error:
         print(f"Ошибка: {error}")
         return
 
-    if reverse_mode:
-        print_graph(
-            "Обратные зависимости (пакет -> кто от него зависит):",
-            graph,
-            cycles,
-            "никто не зависит"
-        )
-
-        users = set()
-        for dependencies in graph.values():
-            users.update(dependencies)
-        users.discard(config["package"])
-
-        print(f"От пакета {config['package']} зависят:", end=" ")
-        print(", ".join(sorted(users)) or "никто")
+    if config.get("reverse_mode", False):
+        print_reverse(config, graph, cycles)
     else:
-        print_graph("Граф зависимостей:", graph, cycles)
-        save_image(graph, config["output_image"])
-
-        if config["ascii_tree"]:
-            print("Дерево зависимостей:")
-            print_tree(graph, config["package"], 0, [])
+        print_result(config, graph, cycles)
 
 
 if __name__ == "__main__":

@@ -30,41 +30,62 @@ def read_config(config_path):
         )
 
 
-def check_config(config):
-    keys = [
-        "package",
-        "repository",
-        "test_mode",
-        "output_image",
-        "ascii_tree",
-        "max_depth",
-        "filter"
-    ]
+MIN_DEPTH = 1
 
-    for key in keys:
+REQUIRED_KEYS = [
+    "package",
+    "repository",
+    "test_mode",
+    "output_image",
+    "ascii_tree",
+    "max_depth",
+    "filter"
+]
+
+
+def is_non_empty_string(value):
+    return isinstance(value, str) and value != ""
+
+
+def is_bool(value):
+    return isinstance(value, bool)
+
+
+def is_png(value):
+    return str(value).endswith(".png")
+
+
+def is_valid_depth(value):
+    return type(value) is int and value >= MIN_DEPTH
+
+
+def is_string(value):
+    return isinstance(value, str)
+
+
+CHECKS = [
+    ("package", is_non_empty_string,
+     "имя пакета должно быть непустой строкой"),
+    ("repository", is_non_empty_string,
+     "репозиторий должен быть непустой строкой"),
+    ("test_mode", is_bool, "test_mode должен быть true или false"),
+    ("output_image", is_png,
+     "имя изображения должно заканчиваться на .png"),
+    ("ascii_tree", is_bool, "ascii_tree должен быть true или false"),
+    ("max_depth", is_valid_depth,
+     "max_depth должен быть целым числом больше 0"),
+    ("filter", is_string, "filter должен быть строкой"),
+]
+
+
+def check_config(config):
+    for key in REQUIRED_KEYS:
         if key not in config:
             raise ValueError(f"не задан параметр {key}")
 
-    if not isinstance(config["package"], str) or config["package"] == "":
-        raise ValueError("имя пакета должно быть непустой строкой")
+    for key, check, message in CHECKS:
+        if not check(config[key]):
+            raise ValueError(message)
 
-    if not isinstance(config["repository"], str) or config["repository"] == "":
-        raise ValueError("репозиторий должен быть непустой строкой")
-
-    if not isinstance(config["test_mode"], bool):
-        raise ValueError("test_mode должен быть true или false")
-
-    if not str(config["output_image"]).endswith(".png"):
-        raise ValueError("имя изображения должно заканчиваться на .png")
-
-    if not isinstance(config["ascii_tree"], bool):
-        raise ValueError("ascii_tree должен быть true или false")
-
-    if type(config["max_depth"]) is not int or config["max_depth"] < 1:
-        raise ValueError("max_depth должен быть целым числом больше 0")
-
-    if not isinstance(config["filter"], str):
-        raise ValueError("filter должен быть строкой")
-
-    if not isinstance(config.get("reverse_mode", False), bool):
+    if not is_bool(config.get("reverse_mode", False)):
         raise ValueError("reverse_mode должен быть true или false")
